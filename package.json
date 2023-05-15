@@ -1,0 +1,28 @@
+{
+  "name": "node-utility",
+  "version": "1.0.0",
+  "description": "collection of node js code",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErikHage/node-utility.git"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Erik Hage",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ErikHage/node-utility/issues"
+  },
+  "homepage": "https://github.com/ErikHage/node-utility#readme",
+  "dependencies": {
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}
