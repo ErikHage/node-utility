@@ -33,6 +33,14 @@ const cases = [
         input: '5 * 10 - 2 * 6 + 100',
         expectedResult: 138,
     },
+    {
+        input: '5 * 10 * 2 - 2 * 6 + 100',
+        expectedResult: 188,
+    },
+    {
+        input: '10 / 5 * 2 + 100',
+        expectedResult: 104,
+    },
 ];
 
 describe('String Expression Evaluator', () => {
