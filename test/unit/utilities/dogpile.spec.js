@@ -1,5 +1,6 @@
 const dogpileMitigationDecorator = require('../../../lib/utilities/dogpile');
 const { wait } = require('../../helpers/test-utils');
+const { ERROR_EXPECTED_BUT_NOT_THROWN } = require('../../helpers/constants');
 
 describe('Dogpile Mitigation Decorator', () => {
     describe('when a single call is made to the wrapped function', () => {
@@ -30,6 +31,23 @@ describe('Dogpile Mitigation Decorator', () => {
             expect(fReturn10).toHaveBeenCalledWith("some-arg");
             expect(result).toEqual(10);
         });
+
+        describe('and the wrapped function is a failed promise', () => {
+            it('should pass the promise rejection to the handler', async () => {
+                const testError = new Error("test-message");
+                const fReturnReject = jest.fn().mockRejectedValue(testError);
+                const fWrapped = dogpileMitigationDecorator(fReturnReject);
+
+                try {
+                    await fWrapped();
+                } catch (err) {
+                    expect(fReturnReject).toHaveBeenCalledTimes(1);
+                    expect(err).toEqual(testError);
+                    return;
+                }
+                throw ERROR_EXPECTED_BUT_NOT_THROWN;
+            });
+        });
     });
 
     describe('when multiple calls made before returning', () => {
@@ -43,6 +61,26 @@ describe('Dogpile Mitigation Decorator', () => {
 
             expect(fReturn10).toHaveBeenCalledTimes(1);
             expect(results).toEqual([10, 10, 10]);
+        });
+
+        describe('and the wrapped function is a failed promise', () => {
+            it('should pass the promise rejection to all handlers', async () => {
+                const testError = new Error("test-message");
+                const fReturnReject = jest.fn().mockImplementation(async () => {
+                    await wait(500);
+                    throw testError;
+                });
+                const fWrapped = dogpileMitigationDecorator(fReturnReject);
+
+                try {
+                    await Promise.all([fWrapped(), fWrapped(), fWrapped()]);
+                } catch (err) {
+                    expect(fReturnReject).toHaveBeenCalledTimes(1);
+                    expect(err).toEqual(testError);
+                    return;
+                }
+                throw ERROR_EXPECTED_BUT_NOT_THROWN;
+            });
         });
     });
 });
